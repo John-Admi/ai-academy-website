@@ -1,0 +1,123 @@
+/* ====== Custom AI Academy Styles ====== */
+
+/* Fonts */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+/* Primary Colors */
+:root {
+  --primary-color: #0057d9;
+  --secondary-color: #0a0a23;
+  --accent-color: #00c9a7;
+}
+
+a, .btn-get-started {
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+a:hover, .btn-get-started:hover {
+  background-color: var(--accent-color);
+  color: #fff;
+}
+
+/* Section Titles */
+.section-title h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--secondary-color);
+}
+
+/* Hero Section */
+#hero {
+  background: url('../img/ai-hero-bg.jpg') center center no-repeat;
+  background-size: cover;
+  padding: 100px 0;
+  text-align: center;
+  color: #fff;
+}
+
+/* Courses */
+.icon-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform 0.3s;
+  text-align: center;
+}
+
+.icon-box i {
+  font-size: 40px;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+}
+
+.icon-box:hover {
+  transform: translateY(-10px);
+}
+
+/* Instructors */
+.member {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.member img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* Testimonials */
+.testimonial-item {
+  background: #fff;
+  padding: 20px;
+  border-left: 5px solid var(--accent-color);
+  margin-bottom: 20px;
+}
+
+/* Contact Form */
+form input, form textarea {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 12px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+form button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+form button:hover {
+  background-color: var(--accent-color);
+}
+
+/* Footer */
+#footer {
+  background: var(--secondary-color);
+  color: #fff;
+  padding: 30px 0;
+  text-align: center;
+}
