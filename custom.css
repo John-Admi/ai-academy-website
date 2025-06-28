@@ -14,7 +14,19 @@ body {
   --accent-color: #00c9a7;
 }
 
-a, .btn-get-started {
+/* General Links (avoid overriding Tailwind buttons) */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+a:hover {
+  color: var(--accent-color);
+}
+
+/* Get Started Button (use only when needed) */
+.btn-get-started {
   background-color: var(--primary-color);
   color: #fff;
   padding: 10px 20px;
@@ -23,7 +35,7 @@ a, .btn-get-started {
   transition: 0.3s ease;
 }
 
-a:hover, .btn-get-started:hover {
+.btn-get-started:hover {
   background-color: var(--accent-color);
   color: #fff;
 }
@@ -40,9 +52,24 @@ a:hover, .btn-get-started:hover {
 #hero {
   background: url('../img/ai-hero-bg.jpg') center center no-repeat;
   background-size: cover;
+  position: relative;
   padding: 100px 0;
-  text-align: center;
   color: #fff;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 1s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Courses */
@@ -50,7 +77,7 @@ a:hover, .btn-get-started:hover {
   background: #fff;
   padding: 30px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s;
   text-align: center;
 }
@@ -71,7 +98,7 @@ a:hover, .btn-get-started:hover {
   padding: 20px;
   border-radius: 8px;
   text-align: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 20px;
 }
 
@@ -92,7 +119,8 @@ a:hover, .btn-get-started:hover {
 }
 
 /* Contact Form */
-form input, form textarea {
+form input,
+form textarea {
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 12px;
@@ -120,4 +148,36 @@ form button:hover {
   color: #fff;
   padding: 30px 0;
   text-align: center;
+}
+
+/* ==== Hero Text Animation ==== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 1s ease forwards;
+}
+
+.animate-fadeInUp.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animate-fadeInUp.delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animate-fadeInUp.delay-400 {
+  animation-delay: 0.4s;
+}
+
+.animate-fadeInUp.delay-500 {
+  animation-delay: 0.5s;
 }
