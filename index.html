@@ -1,159 +1,609 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Academy</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="custom.css">
+
+<!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Contentful SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+
+  <style>
+    #event-loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+    #event-error {
+      display: none;
+      text-align: center;
+      color: red;
+      margin-top: 20px;
+    }
+  </style>
+  
+  <style>
+    body {
+      padding-top: 70px;
+    }
+    .carousel-caption {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+    }
+    .tag-filter button {
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .course-icon {
+      font-size: 3rem;
+      color: var(--bs-primary);
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
-  <script src="custom.js"></script>
+
 <body>
 
-<!-- ======= Header ======= -->
-<header id="header" class="fixed-top">
-  <div class="container d-flex align-items-center">
-    <h1 class="logo me-auto"><a href="index.html">AI Academy</a></h1>
-    <nav class="nav-menu d-none d-lg-block">
-      <ul>
-        <li><a href="#hero">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#courses">Courses</a></li>
-        <li><a href="#instructors">Instructors</a></li>
-        <li><a href="#testimonials">Testimonials</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+<!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="#">AI Academy</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-3">
+          <li class="nav-item"><a class="nav-link" href="#hero">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
+          <li class="nav-item"><a class="nav-link" href="#events">Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="#why-learn">Why Learn</a></li>
+          <li class="nav-item"><a class="nav-link" href="#news">News</a></li>
+          <li class="nav-item"><a class="nav-link" href="#newsletter">Newsletter</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-<!-- ======= Hero Section ======= -->
-<section id="hero" class="d-flex align-items-center">
+<!-- Hero Section -->
+  <section id="hero" class="text-white position-relative text-center py-5" style="background: url('assets/img/hero-bg.jpg') no-repeat center center/cover;">
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-black bg-opacity-60"></div>
+    <div class="container position-relative z-2 py-5">
+      <h1 class="display-4 fw-bold mb-4">Unlock the Future with AI</h1>
+      <p class="lead mb-4">
+        <h2>Empowering Professionals Across Sectors to Lead with AI</h2><br/><br/>
+      </p>
+      <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+        <a href="#courses" class="btn btn-primary">Explore Courses</a>
+        <a href="#events" class="btn btn-primary">Upcoming Events</a>
+        <a href="#newsletter" class="btn btn-primary">Join Newsletter</a>
+      </div>
+    </div>
+  </section>
+
+<!-- Events Section with Tags and Pagination -->
+<section id="events" class="py-5 bg-light">
+  <style>
+    .carousel-img {
+      height: 400px;
+      object-fit: cover;
+    }
+
+    #event-error {
+      display: none;
+      color: #d9534f;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    #event-loader {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+  </style>
+
+  <div class="container">
+    <h2 class="text-center mb-4">📅 Upcoming Events</h2>
+
+    <!-- Spinner -->
+    <div id="event-loader">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="event-error"> Failed to load events. Please try again later.</div>
+
+    <!-- Carousel Wrapper -->
+    <div id="carouselWrapper" class="d-none">
+      <div id="eventsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="hover">
+        <div class="carousel-inner" id="eventsCarouselInner">
+          <!-- Slides injected dynamically -->
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#eventsCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#eventsCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bootstrap Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Contentful SDK -->
+<script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+
+<script>
+  const client = contentful.createClient({
+    space: 'e0nbxsbmci4k',
+    accessToken: 'YaxnpJ7tfCRxXZBmGjy5312uzO-kTyGBB2m8QYsZzv9E'
+  });
+
+  const today = new Date();
+
+  client.getEntries({ content_type: 'event' })
+    .then(response => {
+      const events = response.items.filter(item => {
+        const eventDate = new Date(item.fields.date);
+        return eventDate >= today;
+      }).sort((a, b) => new Date(a.fields.date) - new Date(b.fields.date));
+
+      const carouselInner = document.getElementById('eventsCarouselInner');
+      const loader = document.getElementById('event-loader');
+      const wrapper = document.getElementById('carouselWrapper');
+      const errorBox = document.getElementById('event-error');
+
+      loader.style.display = 'none';
+
+      if (events.length === 0) {
+        errorBox.textContent = 'No upcoming events found.';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      wrapper.classList.remove('d-none');
+
+      events.forEach((item, index) => {
+        const { title, date, description, learnMoreUrl, registerUrl } = item.fields;
+
+        const imageUrl = item.fields.image?.fields.file.url
+          ? `https:${item.fields.image.fields.file.url}`
+          : 'assets/img/event.png'; // Fallback image path
+
+        const slide = document.createElement('div');
+        slide.className = 'carousel-item' + (index === 0 ? ' active' : '');
+
+        slide.innerHTML = `
+          <img src="${imageUrl}" class="d-block w-100 carousel-img" alt="${title}" loading="lazy">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>${title} – ${new Date(date).toLocaleDateString()}</h5>
+            <p>${description}</p>
+            ${learnMoreUrl ? `<a href="${learnMoreUrl}" class="btn btn-primary btn-sm" target="_blank">Learn More</a>` : ''}
+            ${registerUrl ? `<a href="${registerUrl}" class="btn btn-outline-light btn-sm" target="_blank">Register</a>` : ''}
+            <button class="btn btn-outline-light btn-sm">Sign Up for Reminder</button>
+          </div>
+        `;
+
+        carouselInner.appendChild(slide);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching events:', error);
+      document.getElementById('event-loader').style.display = 'none';
+      document.getElementById('event-error').style.display = 'block';
+    });
+</script>
+
+<!-- Courses Section -->
+<section id="courses" class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-5">AI Courses Overview</h2>
+    <div class="row g-4" id="coursesContainer">
+
+<!-- Dynamic course cards will be injected here -->
+    </div>
+  </div>
+</section>
+
+<!-- Contentful SDK -->
+<script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+
+<!-- Course Loader Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const client = contentful.createClient({
+      space: "e0nbxsbmci4k", // ✅ Replace with your Space ID
+      accessToken: "YaxnpJ7tfCRxXZBmGjy5312uzO-kTyGBB2m8QYsZzv9E" // ✅ Replace with your CDA Token
+    });
+
+    const container = document.getElementById("coursesContainer");
+
+    client.getEntries({ content_type: "course" })
+      .then(response => {
+        if (response.items.length === 0) {
+          container.innerHTML = '<p class="text-center text-muted">No courses available at the moment.</p>';
+          return;
+        }
+
+        response.items.forEach(entry => {
+          const { title, description, link, image } = entry.fields;
+          const imageUrl = image?.fields?.file?.url 
+            ? `https:${image.fields.file.url}` 
+            : 'https://via.placeholder.com/400x250?text=No+Image';
+
+          const col = document.createElement("div");
+          col.className = "col-md-4";
+          col.innerHTML = `
+            <div class="card h-100 shadow-sm">
+              <img src="${imageUrl}" class="card-img-top" alt="${title}" loading="lazy" style="height: 200px; object-fit: cover;">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">${title}</h5>
+                <p class="card-text">${description}</p>
+                <a href="${link}" class="btn btn-primary mt-auto btn-sm" target="_blank" rel="noopener noreferrer">Learn More</a>
+              </div>
+            </div>
+          `;
+          container.appendChild(col);
+        });
+      })
+      .catch(err => {
+        console.error("Error fetching courses:", err);
+        container.innerHTML = '<p class="text-danger text-center">Failed to load courses. Please try again later.</p>';
+      });
+  });
+</script>
+
+<!-- Why Learn With Us Section -->
+<section id="why-learn" class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">🚀 Why Learn With Us</h2>
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow rounded-4">
+          <div class="card-body">
+            <h5 class="card-title">👨‍🏫 Expert-led Training</h5>
+            <p class="card-text">Learn from seasoned professionals with real-world experience in AI and tech innovation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow rounded-4">
+          <div class="card-body">
+            <h5 class="card-title">🛠️ Hands-on Projects</h5>
+            <p class="card-text">Apply your knowledge through practical projects designed to build real-world skills.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow rounded-4">
+          <div class="card-body">
+            <h5 class="card-title">🎓 Certification & Networking</h5>
+            <p class="card-text">Get certified and join a community of African AI learners and professionals.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Testimonials Slider -->
+    <div class="mt-5">
+      <h3 class="text-center mb-4">💬 Success Stories</h3>
+      <div id="testimonial-loader" class="text-center mb-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading testimonials...</span>
+        </div>
+      </div>
+      <div id="testimonial-error" class="text-center text-danger d-none">
+        Unable to load testimonials. Please check again later.
+      </div>
+      <div id="testimonialsCarousel" class="carousel slide d-none" data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="hover">
+        <div class="carousel-inner" id="testimonialsCarouselInner">
+          <!-- Testimonials will load dynamically -->
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialsCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#testimonialsCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contentful Testimonials Script -->
+<script>
+  const testimonialClient = contentful.createClient({
+    space: 'e0nbxsbmci4k',
+    accessToken: 'YaxnpJ7tfCRxXZBmGjy5312uzO-kTyGBB2m8QYsZzv9E'
+  });
+
+  testimonialClient.getEntries({ content_type: 'testimonial' })
+    .then(response => {
+      const items = response.items;
+      const carouselInner = document.getElementById('testimonialsCarouselInner');
+      const loader = document.getElementById('testimonial-loader');
+      const errorBox = document.getElementById('testimonial-error');
+      const carousel = document.getElementById('testimonialsCarousel');
+
+      loader.style.display = 'none';
+
+      if (!items.length) {
+        errorBox.classList.remove('d-none');
+        errorBox.textContent = 'No testimonials available right now.';
+        return;
+      }
+
+      carousel.classList.remove('d-none');
+
+      items.forEach((item, index) => {
+        const { name, quote, organization } = item.fields;
+        const slide = document.createElement('div');
+        slide.className = 'carousel-item' + (index === 0 ? ' active' : '');
+
+        slide.innerHTML = `
+          <div class="text-center p-4">
+            <blockquote class="blockquote">
+              <p class="mb-4">\"${quote}\"</p>
+              <footer class="blockquote-footer">${name}, ${organization || 'Participant'}</footer>
+            </blockquote>
+          </div>
+        `;
+
+        carouselInner.appendChild(slide);
+      });
+    })
+    .catch(error => {
+      console.error('Testimonials fetch error:', error);
+      document.getElementById('testimonial-loader').style.display = 'none';
+      document.getElementById('testimonial-error').classList.remove('d-none');
+    });
+</script>
+
+<!-- Latest News & Articles Section -->
+<section id="news" class="py-5 bg-white">
+  <div class="container">
+    <h2 class="text-center mb-4">📰 Latest News & Articles</h2>
+
+    <div class="d-flex justify-content-center mb-4">
+      <div class="btn-group" id="tag-filters">
+        <button class="btn btn-outline-primary active" data-tag="all">All</button>
+        <button class="btn btn-outline-primary" data-tag="business">Business</button>
+        <button class="btn btn-outline-primary" data-tag="government">Government</button>
+        <button class="btn btn-outline-primary" data-tag="creativity">Creativity</button>
+        <button class="btn btn-outline-primary" data-tag="productivity">Productivity</button>
+      </div>
+    </div>
+
+    <div id="news-loader" class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div id="news-error" class="text-center text-danger d-none">
+      Failed to load articles. Please try again later.
+    </div>
+
+    <div class="row" id="news-container">
+      <!-- Articles will load here -->
+    </div>
+  </div>
+</section>
+
+<script>
+  const newsContainer = document.getElementById('news-container');
+  const newsLoader = document.getElementById('news-loader');
+  const newsError = document.getElementById('news-error');
+  const tagButtons = document.querySelectorAll('#tag-filters button');
+
+  let allArticles = [];
+
+  const renderArticles = (tag) => {
+    newsContainer.innerHTML = '';
+    let filtered = tag === 'all' ? allArticles : allArticles.filter(a => a.fields.tags.includes(tag));
+
+    if (filtered.length === 0) {
+      newsContainer.innerHTML = '<p class="text-center">No articles found for this tag.</p>';
+      return;
+    }
+
+    filtered.forEach(article => {
+      const { title, summary, image, tags } = article.fields;
+      const imageUrl = image?.fields?.file?.url || 'https://via.placeholder.com/600x400?text=No+Image';
+      const card = document.createElement('div');
+      card.className = 'col-md-4 mb-4';
+      card.innerHTML = `
+        <div class="card h-100 shadow-sm">
+          <img src="https:${imageUrl}" class="card-img-top" alt="${title}" style="height: 200px; object-fit: cover" loading="lazy">
+          <div class="card-body">
+            <h5 class="card-title">${title}</h5>
+            <p class="card-text">${summary}</p>
+          </div>
+          <div class="card-footer text-end">
+            <a href="#" class="btn btn-sm btn-primary">Read More</a>
+          </div>
+        </div>
+      `;
+      newsContainer.appendChild(card);
+    });
+  };
+
+  const loadArticles = () => {
+    contentful.createClient({
+      space: 'e0nbxsbmci4k',
+      accessToken: 'YaxnpJ7tfCRxXZBmGjy5312uzO-kTyGBB2m8QYsZzv9E'
+    }).getEntries({ content_type: 'blogPost' })
+      .then(response => {
+        allArticles = response.items;
+        newsLoader.style.display = 'none';
+        renderArticles('all');
+      })
+      .catch(error => {
+        console.error('Error fetching articles:', error);
+        newsLoader.style.display = 'none';
+        newsError.classList.remove('d-none');
+      });
+  };
+
+  tagButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tagButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderArticles(btn.dataset.tag);
+    });
+  });
+
+  loadArticles();
+</script>
+
+<!-- Newsletter Signup Section -->
+<section id="newsletter" class="py-5 bg-primary text-white">
   <div class="container text-center">
-    <h1>Welcome to AI Academy</h1>
-    <h2>Learn Artificial Intelligence with hands-on training and expert mentorship.</h2>
-    <a href="#courses" class="btn-get-started">Explore Courses</a>
+    <h2 class="mb-4">Stay updated on new courses, tools, and AI events</h2>
+    <button class="btn btn-light btn-lg animate__animated animate__pulse" data-bs-toggle="modal" data-bs-target="#brevoModal">
+      Sign Up for Newsletter
+    </button>
   </div>
 </section>
 
-<!-- ======= About Section ======= -->
-<section id="about" class="about">
-  <div class="container">
-    <div class="section-title">
-      <h2>About Us</h2>
-      <p>AI Academy is dedicated to training the next generation of AI professionals. We offer industry-grade courses in Machine Learning, Deep Learning, NLP, and more.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ======= Courses Section ======= -->
-<section id="courses" class="services">
-  <div class="container">
-    <div class="section-title">
-      <h2>Our Courses</h2>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <div class="icon-box">
-          <i class="fas fa-robot"></i>
-          <h4>Intro to Machine Learning</h4>
-          <p>Learn ML fundamentals using Python, Scikit-learn, and real-world data sets.</p>
-        </div>
+<!-- Modal with Brevo Signup Form -->
+<div class="modal fade" id="brevoModal" tabindex="-1" aria-labelledby="brevoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content animate__animated animate__fadeInDown">
+      <div class="modal-header">
+        <h5 class="modal-title" id="brevoModalLabel">Newsletter Signup</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="col-md-4">
-        <div class="icon-box">
-          <i class="fas fa-brain"></i>
-          <h4>Deep Learning with TensorFlow</h4>
-          <p>Build neural networks and train models using TensorFlow and Keras.</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="icon-box">
-          <i class="fas fa-comment-dots"></i>
-          <h4>Natural Language Processing</h4>
-          <p>Explore sentiment analysis, text classification, and transformers.</p>
-        </div>
+      <div class="modal-body p-0">
+        <iframe 
+          src="https://your-brevo-form-link.brevoforms.com" 
+          width="100%" 
+          height="500" 
+          frameborder="0" 
+          scrolling="no" 
+          loading="lazy"
+          style="border: none; background-color: transparent;"
+          id="brevoSignupIframe">
+        </iframe>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ======= Instructors Section ======= -->
-<section id="instructors" class="team">
-  <div class="container">
-    <div class="section-title">
-      <h2>Our Instructors</h2>
-    </div>
-    <div class="row">
-      <div class="col-lg-6">
-        <div class="member">
-          <img src="assets/img/instructor1.jpg" class="img-fluid" alt="">
-          <h4>Dr. Jane Doe</h4>
-          <span>AI Researcher, PhD in Computer Science</span>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="member">
-          <img src="assets/img/instructor2.jpg" class="img-fluid" alt="">
-          <h4>Prof. John Smith</h4>
-          <span>Machine Learning Expert, 10+ years of industry experience</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- Responsive iframe height -->
+<style>
+  @media (max-width: 768px) {
+    #brevoSignupIframe {
+      height: 400px;
+    }
+  }
 
-<!-- ======= Testimonials Section ======= -->
-<section id="testimonials" class="testimonials">
-  <div class="container">
-    <div class="section-title">
-      <h2>Testimonials</h2>
-    </div>
-    <div class="testimonial-item">
-      <p>"The best AI learning platform I’ve used. Practical, clear, and relevant." – Alice M., Data Scientist</p>
-    </div>
-    <div class="testimonial-item">
-      <p>"AI Academy helped me land a job in machine learning within 3 months!" – Raj P., ML Engineer</p>
-    </div>
-  </div>
-</section>
+  @media (max-width: 576px) {
+    #brevoSignupIframe {
+      height: 350px;
+    }
+  }
+</style>
 
-<!-- ======= Contact Section ======= -->
-<section id="contact" class="contact">
-  <div class="container">
-    <div class="section-title">
-      <h2>Contact Us</h2>
-    </div>
-    <form action="https://formspree.io/f/your-id" method="POST" class="php-email-form">
-      <div class="row">
-        <div class="col-md-6 form-group">
-          <input type="text" name="name" class="form-control" placeholder="Your Name" required>
-        </div>
-        <div class="col-md-6 form-group mt-3 mt-md-0">
-          <input type="email" name="email" class="form-control" placeholder="Your Email" required>
-        </div>
-      </div>
-      <div class="form-group mt-3">
-        <textarea name="message" class="form-control" rows="5" placeholder="Your Message" required></textarea>
-      </div>
-      <div class="text-center mt-3"><button type="submit">Send Message</button></div>
-    </form>
-  </div>
-</section>
+<!-- Animate.css (optional animation library) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-<!-- ======= Footer ======= -->
-<footer id="footer">
-  <div class="container">
-    <div class="copyright">
-      &copy; 2025 <strong>AI Academy</strong>. All Rights Reserved
-    </div>
-  </div>
-</footer>
+<script>
+  const form = document.getElementById('newsletter-form');
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const submitBtn = document.getElementById('submit-btn');
+  const spinner = document.getElementById('submit-spinner');
+  const submitText = document.getElementById('submit-text');
+  const successBox = document.getElementById('newsletter-success');
+  const errorBox = document.getElementById('newsletter-error');
 
-<!-- JS Scripts -->
-<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/main.js"></script>
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Reset messages
+    successBox.classList.add('d-none');
+    errorBox.classList.add('d-none');
+
+    // Disable submit button and show spinner
+    submitBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    submitText.textContent = 'Submitting...';
+
+    // Prepare the data
+    const data = {
+      email: emailInput.value,
+      attributes: {
+        FIRSTNAME: nameInput.value
+      },
+      listIds: [/* Replace with your Brevo list ID, e.g., 2 */],
+      updateEnabled: true
+    };
+
+    fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': 'YOUR_BREVO_API_KEY' // Replace with your actual API key
+      },
+      body: JSON.stringify(data)
+    })
+      .then(async response => {
+        const result = await response.json();
+        if (response.ok) {
+          successBox.textContent = "🎉 You're subscribed!";
+          successBox.classList.remove('d-none');
+          form.reset();
+        } else {
+          let errorMsg = result.message || 'Something went wrong. Please try again.';
+          if (result.code === 'duplicate_parameter') {
+            errorMsg = ' This email is already subscribed.';
+          }
+          errorBox.textContent = errorMsg;
+          errorBox.classList.remove('d-none');
+        }
+      })
+      .catch(err => {
+        console.error('Subscription error:', err);
+        errorBox.textContent = 'An unexpected error occurred. Please try again.';
+        errorBox.classList.remove('d-none');
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        spinner.classList.add('d-none');
+        submitText.textContent = 'Subscribe';
+      });
+  });
+</script>
+
+<!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3">
+    <div class="container">
+      &copy; 2025 AI Academy. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- FontAwesome JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <!-- Custom JS -->
+  <script src="custom.js"></script>
 </body>
 </html>
